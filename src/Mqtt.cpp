@@ -24,7 +24,7 @@ bool Mqtt::init(void (*callback)(char*, uint8_t *, unsigned int))
     return false;
   }
   
-  mqttClient.setServer((const char *)MQTT_HOST, MQTT_PORT);
+  mqttClient.setServer(MQTT_HOST, MQTT_PORT);
   mqttClient.setCallback(callback);
   return true;
 }

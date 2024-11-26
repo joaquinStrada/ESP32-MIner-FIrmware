@@ -25,7 +25,6 @@ void callback(char * topic, uint8_t * payload, unsigned int length);
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  WiFi.setTxPower(WIFI_POWER_5dBm);
   setupWifi();
   setupMiner();
 
@@ -170,9 +169,7 @@ void sendData(void *parameter) {
     {
       mqtt.reconnect();
     }
-
-  
-
+    delay(100);
     mqtt.loop();
   }
   vTaskDelay(10);
