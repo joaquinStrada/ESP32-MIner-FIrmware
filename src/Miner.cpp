@@ -370,3 +370,22 @@ void Miner::run(void) {
   // Close connection pool
   client.stop();
 }
+
+long unsigned int Miner::getData(meassurment type)
+{
+  switch (type)
+  {
+    case VALID_SHARES:
+      return _validShares;
+      break;
+    case INVALID_SHARES:
+      return _invalidShares;
+      break;
+    case HASHRATE:
+      return 1000000 / _timeMining;
+      break;
+    default:
+      return _validShares;
+      break;
+    }
+}

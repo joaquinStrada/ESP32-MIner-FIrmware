@@ -13,4 +13,6 @@
 
     bool checkValid(unsigned char* hash, unsigned char* target);
 
+    float getRSSIasQuality(float rssi);
+
 #endif // __UTILS_H__

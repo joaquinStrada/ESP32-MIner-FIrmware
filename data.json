@@ -1,0 +1,10 @@
+{
+  "validHashes": 316224000000000000000,
+  "invalidHashes": 316224000000000000000,
+  "cpu": 100,
+  "memory": 100,
+  "memoryFlash": 100,
+  "disk": 100,
+  "red": -200,
+  "hashRate": 1000000000000
+}

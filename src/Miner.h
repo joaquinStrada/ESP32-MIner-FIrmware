@@ -3,10 +3,18 @@
 
 #include <Arduino.h>
 
+enum meassurment
+{
+    VALID_SHARES,
+    INVALID_SHARES,
+    HASHRATE
+};
+
 class Miner {
     public:
         void setup(String name, String poolUrl, int poolPort, String walletAddress);
         void run(void);
+        long unsigned int getData(meassurment type);
     private:
         String _name;
         IPAddress _poolIp;

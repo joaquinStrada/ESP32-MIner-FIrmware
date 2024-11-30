@@ -5,6 +5,8 @@
 #include <ArduinoJson.h>
 #include <Miner.h>
 #include <Mqtt.h>
+#include <SPIFFS.h>
+#include <utils.h>
 
 Miner miner;
 Mqtt mqtt;
@@ -169,7 +171,33 @@ void sendData(void *parameter) {
     {
       mqtt.reconnect();
     }
-    delay(100);
+    
+    if (mqtt.connected())
+    {
+      StaticJsonDocument<128> doc;
+      long unsigned int validShares;
+      long unsigned int invalidShares;
+      float cpu;
+      float memory;
+      float memoryPsram;
+      float disk;
+      float red;
+      long unsigned int hashRate;
+
+      for (int i = 0; i < SAMPLES; i++)
+      {
+        validShares += miner.getData(VALID_SHARES);
+        invalidShares += miner.getData(INVALID_SHARES);
+        memory += 100 - (ESP.getFreeHeap() * 100 / ESP.getHeapSize());
+        memoryPsram += 100 - (ESP.getFreePsram() * 100 / ESP.getPsramSize()); 
+        disk += SPIFFS.usedBytes() * 100 / SPIFFS.totalBytes();
+        red += getRSSIasQuality(WiFi.RSSI());
+        hashRate += miner.getData(HASHRATE);
+      }
+      
+    }
+    
+
     mqtt.loop();
   }
   vTaskDelay(10);

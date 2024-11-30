@@ -13,3 +13,6 @@
 
 // Miner
 #define MAX_NONCE 1000000
+
+// Samples
+#define SAMPLES 10
