@@ -70,7 +70,7 @@ bool checkValid(unsigned char* hash, unsigned char* target) {
   return valid;
 }
 
-float getRSSIasQuality(float rssi)
+float getRSSIAsQuality(float rssi)
 {
     float quality;
 
@@ -84,4 +84,20 @@ float getRSSIasQuality(float rssi)
     }
 
     return quality;
+}
+
+float roundNumber(float number, int decimals)
+{
+    double _power = 1.0;
+
+    if (decimals != 0)
+    {
+        for (int i = 0; i < decimals; i++)
+        {
+            _power *= 10;
+        }
+        
+    }
+    
+    return (roundf(number * _power)/_power);
 }

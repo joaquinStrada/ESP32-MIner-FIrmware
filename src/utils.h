@@ -13,6 +13,8 @@
 
     bool checkValid(unsigned char* hash, unsigned char* target);
 
-    float getRSSIasQuality(float rssi);
+    float getRSSIAsQuality(float rssi);
+
+    float roundNumber(float number, int decimals);
 
 #endif // __UTILS_H__

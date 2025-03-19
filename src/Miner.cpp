@@ -377,15 +377,11 @@ long unsigned int Miner::getData(meassurment type)
   {
     case VALID_SHARES:
       return _validShares;
-      break;
     case INVALID_SHARES:
       return _invalidShares;
-      break;
     case HASHRATE:
-      return 1000000 / _timeMining;
-      break;
+      return _timeMining > 0 ? (1000000 / _timeMining) : 0;
     default:
       return _validShares;
-      break;
     }
 }

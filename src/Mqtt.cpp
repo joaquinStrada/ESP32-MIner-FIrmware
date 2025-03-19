@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <config.h>
+#include <ArduinoJson.h>
 
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
@@ -82,4 +83,17 @@ void Mqtt::loop(void)
 {
   mqttClient.loop();
 }
+
+void Mqtt::send(StaticJsonDocument<128> doc)
+{
+  // paso de json a string
+  String data = "";
+
+  serializeJson(doc, data);
+
+  // Mando por mqtt los datos
+  mqttClient.publish(_mqttTopic.c_str(), (char*)data.c_str());
+}
+
+
 

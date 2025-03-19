@@ -7,6 +7,7 @@
 #include <Mqtt.h>
 #include <SPIFFS.h>
 #include <utils.h>
+#include "esp_heap_caps.h"
 
 Miner miner;
 Mqtt mqtt;
@@ -27,6 +28,7 @@ void callback(char * topic, uint8_t * payload, unsigned int length);
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  SPIFFS.begin();
   setupWifi();
   setupMiner();
 
@@ -174,27 +176,46 @@ void sendData(void *parameter) {
     
     if (mqtt.connected())
     {
+      // Creamos el json con los datos
       StaticJsonDocument<128> doc;
-      long unsigned int validShares;
-      long unsigned int invalidShares;
-      float cpu;
-      float memory;
-      float memoryPsram;
-      float disk;
-      float red;
-      long unsigned int hashRate;
+      long unsigned int validShares = 0;
+      long unsigned int invalidShares = 0;
+      long unsigned int hashrate = 0;
+      float memory = 0;
+      float memoryPsram = 0;
+      float disk = 0;
+      float red = 0;
 
       for (int i = 0; i < SAMPLES; i++)
       {
         validShares += miner.getData(VALID_SHARES);
         invalidShares += miner.getData(INVALID_SHARES);
-        memory += 100 - (ESP.getFreeHeap() * 100 / ESP.getHeapSize());
-        memoryPsram += 100 - (ESP.getFreePsram() * 100 / ESP.getPsramSize()); 
-        disk += SPIFFS.usedBytes() * 100 / SPIFFS.totalBytes();
-        red += getRSSIasQuality(WiFi.RSSI());
-        hashRate += miner.getData(HASHRATE);
+        hashrate += miner.getData(HASHRATE);
+
+        size_t heapSize = ESP.getHeapSize();
+        size_t freeHeap = ESP.getFreeHeap();
+        size_t psramSize = ESP.getPsramSize();
+        size_t freePsram = ESP.getFreePsram();
+        size_t totalDisk = SPIFFS.totalBytes();
+        size_t usedDisk = SPIFFS.usedBytes();
+
+        memory += (heapSize > 0) ? (100.0 - ((float)freeHeap * 100.0 / (float)heapSize)) : 0;
+        memoryPsram += (psramSize > 0) ? (100 - ((float)freePsram * 100.0 / (float)psramSize)) : 0;
+        disk += (totalDisk > 0) ? ((float)usedDisk * 100.0 / (float)totalDisk) : 0;
+        red += getRSSIAsQuality(WiFi.RSSI());
       }
       
+      doc["validShares"] = validShares/SAMPLES;
+      doc["invalidShares"] = invalidShares/SAMPLES;
+      doc["memory"] = roundNumber(memory/(float)SAMPLES, 2);
+      doc["memoryPsram"] = roundNumber(memoryPsram/(float)SAMPLES, 2);
+      doc["disk"] = roundNumber(disk/(float)SAMPLES, 2);
+      doc["red"] = roundNumber(red/(float)SAMPLES, 2);
+      doc["hashrate"] = hashrate/SAMPLES;
+
+      // Mandamos los datos por mqtt
+      mqtt.send(doc);
+      delay(1000);
     }
     
 

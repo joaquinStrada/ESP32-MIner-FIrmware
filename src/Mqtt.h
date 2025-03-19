@@ -2,6 +2,7 @@
 #define __MQTT_H__
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
 
 class Mqtt {
     public:
@@ -10,6 +11,7 @@ class Mqtt {
         bool connected(void);
         void reconnect(void);
         void loop(void);
+        void send(StaticJsonDocument<128> doc);
     private:
         String _nameMiner;
         String _mqttUser;
