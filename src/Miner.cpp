@@ -307,11 +307,11 @@ void Miner::run(void) {
 
   // Search a valid nonce
   uint32_t nonce = 0;
-  uint32_t startMining = micros();
   bool mining = true;
 
   while (mining)
   {
+    uint64_t startMining = esp_timer_get_time();
     byteArrayBlockHeader[76] = (nonce >> 0) & 0xFF;
     byteArrayBlockHeader[77] = (nonce >> 8) & 0xFF;
     byteArrayBlockHeader[78] = (nonce >> 16) & 0xFF;
@@ -361,10 +361,11 @@ void Miner::run(void) {
       Serial.printf("%s on core %d: Nonce > MAX_NONCE\n", _name.c_str(), xPortGetCoreID());
       mining = false;
     }
+
+    _hashrate = 1000000 / (esp_timer_get_time() - startMining);
   }
   
   // Exit mining
-  _timeMining = micros() - startMining;
   mbedtls_md_free(&ctx);
 
   // Close connection pool
@@ -380,7 +381,7 @@ long unsigned int Miner::getData(meassurment type)
     case INVALID_SHARES:
       return _invalidShares;
     case HASHRATE:
-      return _timeMining > 0 ? (1000000 / _timeMining) : 0;
+      return _hashrate;
     default:
       return _validShares;
     }

@@ -215,7 +215,7 @@ void sendData(void *parameter) {
 
       // Mandamos los datos por mqtt
       mqtt.send(doc);
-      delay(1000);
+      delay(300);
     }
     
 

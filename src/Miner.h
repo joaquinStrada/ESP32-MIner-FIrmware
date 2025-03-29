@@ -27,7 +27,7 @@ class Miner {
         byte _shaResult[32];
         long unsigned int _validShares;
         long unsigned int _invalidShares;
-        uint32_t _timeMining;
+        long unsigned int _hashrate;
 };
 
 #endif // __MINER_H__
